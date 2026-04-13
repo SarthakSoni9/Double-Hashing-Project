@@ -176,6 +176,10 @@ function gcd(a, b) {
   return x;
 }
 
+function normalizeIndex(value, modulus) {
+  return ((value % modulus) + modulus) % modulus;
+}
+
 function setStatus(message) {
   if (elements.globalStatus) {
     elements.globalStatus.textContent = message;
@@ -218,6 +222,101 @@ function getStep(key) {
   }
 
   return step;
+}
+
+function buildSnapshot(table, activeIndex = null, finalIndex = null) {
+  return table.map((slot, index) => ({
+    index,
+    state: slot ? "occupied" : "empty",
+    key: slot ? slot.key : null,
+    active: index === activeIndex,
+    final: index === finalIndex
+  }));
+}
+
+function analyzeInsertLocally(key) {
+  const h1 = normalizeIndex(key, state.tableSize);
+  const h2 = getStep(key);
+  const probes = [];
+  const nextTable = state.table.map((slot) => (slot ? { ...slot } : null));
+
+  const existingIndex = nextTable.findIndex((slot) => slot && slot.key === key);
+  if (existingIndex >= 0) {
+    return {
+      ok: true,
+      key,
+      duplicate: true,
+      insertedAt: existingIndex,
+      constants: {
+        m: state.tableSize,
+        r: state.secondaryPrime,
+        h1,
+        h2
+      },
+      probes: [
+        {
+          step: 0,
+          index: existingIndex,
+          collision: false,
+          formula: `Duplicate found at slot ${existingIndex}`,
+          detail: `Key ${key} already exists, so no new insertion is performed.`,
+          snapshot: buildSnapshot(nextTable, existingIndex, existingIndex)
+        }
+      ],
+      table: buildSnapshot(nextTable, existingIndex, existingIndex),
+      summary: `Key ${key} is already present at slot ${existingIndex}.`
+    };
+  }
+
+  for (let step = 0; step < state.tableSize; step += 1) {
+    const index = (h1 + step * h2) % state.tableSize;
+    const slot = nextTable[index];
+    const collision = Boolean(slot);
+
+    probes.push({
+      step,
+      index,
+      collision,
+      formula: `(${h1} + ${step} x ${h2}) mod ${state.tableSize} = ${index}`,
+      detail: collision
+        ? `Slot ${index} already contains ${slot.key}, so the pulse jumps by h2 = ${h2}.`
+        : `Slot ${index} is empty, so key ${key} lands here.`,
+      snapshot: buildSnapshot(nextTable, index)
+    });
+
+    if (!collision) {
+      nextTable[index] = { key };
+      return {
+        ok: true,
+        key,
+        constants: {
+          m: state.tableSize,
+          r: state.secondaryPrime,
+          h1,
+          h2
+        },
+        insertedAt: index,
+        probes,
+        table: buildSnapshot(nextTable, index, index),
+        summary: `Inserted ${key} at slot ${index} after ${step + 1} probe${step === 0 ? "" : "s"}.`
+      };
+    }
+  }
+
+  return {
+    ok: false,
+    key,
+    constants: {
+      m: state.tableSize,
+      r: state.secondaryPrime,
+      h1,
+      h2
+    },
+    insertedAt: -1,
+    probes,
+    table: buildSnapshot(nextTable),
+    summary: `The table is full for key ${key}; no empty slot was found in the probe cycle.`
+  };
 }
 
 function syncTableConfig() {
@@ -688,17 +787,8 @@ async function analyzeKey() {
   }
 
   try {
-    setStatus(`Sending key ${key} to the analyzer...`);
-    const response = await fetch("/analyze", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ key, table: state.table, tableSize: state.tableSize })
-    });
-    const payload = await response.json();
-    if (!response.ok) {
-      throw new Error(payload.error || "Analyzer request failed.");
-    }
-
+    setStatus(`Analyzing key ${key} inside the browser...`);
+    const payload = analyzeInsertLocally(key);
     state.tableSize = payload.constants.m;
     syncTableConfig();
     updateVisualizerLabels();
