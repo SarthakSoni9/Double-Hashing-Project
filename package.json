@@ -1,0 +1,22 @@
+{
+  "name": "hashmatrix-double-hashing-lab",
+  "version": "1.0.0",
+  "description": "Cyber-grid double hashing lab with an Express backend, Tailwind layout, and GSAP probe animations.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js"
+  },
+  "keywords": [
+    "double-hashing",
+    "express",
+    "gsap",
+    "tailwind",
+    "data-structures"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}

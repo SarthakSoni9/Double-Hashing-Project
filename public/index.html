@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Neon Probe Laboratory</title>
+    <meta
+      name="description"
+      content="A dark cyber-laboratory for understanding double hashing through animated probe trails, live calculations, and code views."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["Sora", "sans-serif"],
+              mono: ["IBM Plex Mono", "monospace"]
+            },
+            colors: {
+              ink: "#020617",
+              panel: "#0f172a",
+              line: "rgba(148, 163, 184, 0.18)",
+              glow: "#38bdf8",
+              amber: "#f59e0b",
+              mint: "#34d399",
+              rose: "#fb7185"
+            }
+          }
+        }
+      };
+    </script>
+    <link rel="stylesheet" href="./style.css?v=3" />
+  </head>
+  <body class="font-sans text-slate-100">
+    <div class="space-bg" aria-hidden="true">
+      <div class="space-orb orb-a"></div>
+      <div class="space-orb orb-b"></div>
+      <div class="space-orb orb-c"></div>
+      <div class="scan-grid"></div>
+    </div>
+
+    <div class="app-shell relative z-10 min-h-screen">
+      <header class="px-4 pb-4 pt-5 md:px-8">
+        <nav class="nav-pill mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 md:px-6">
+          <div class="flex items-center gap-3">
+            <div class="brand-mark">
+              <i data-lucide="orbit"></i>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.4em] text-sky-300/80">Neon Probe Lab</p>
+              <p class="text-sm text-slate-400">Double Hashing Control Deck</p>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button class="nav-link is-active" data-route="home" type="button">Home</button>
+            <button class="nav-link" data-route="visualizer" type="button">Visualizer</button>
+            <button class="nav-link" data-route="polyglot" type="button">Polyglot</button>
+          </div>
+        </nav>
+      </header>
+
+      <main class="mx-auto max-w-7xl px-4 pb-10 md:px-8">
+        <section class="spa-section is-active" data-section="home">
+          <div class="hero-card overflow-hidden rounded-[2rem] p-6 md:p-8 xl:p-10">
+            <div class="grid gap-10 xl:grid-cols-[1.2fr_0.8fr]">
+              <div>
+                <p class="eyebrow">Midnight Collision Laboratory</p>
+                <h1 class="mt-4 max-w-4xl text-4xl font-extrabold leading-tight md:text-6xl xl:text-7xl">
+                  Track every probe like a live experiment inside a neon hash grid.
+                </h1>
+                <p class="mt-6 max-w-2xl text-base leading-8 text-slate-300 md:text-lg">
+                  Explore collision recovery through a dark, responsive interface built like a compact research console.
+                  Watch probe paths, inspect live formulas, and switch code views without leaving the same screen.
+                </p>
+
+                <div class="mt-8 flex flex-wrap gap-3">
+                  <button id="heroLaunchBtn" class="primary-cta pulse-cta" type="button">Launch The Lab</button>
+                  <button id="heroDemoBtn" class="secondary-cta" type="button">Load Guided Demo</button>
+                </div>
+
+                <div class="mt-10 grid gap-4 md:grid-cols-3">
+                  <article class="stat-card">
+                    <span>Hash Table</span>
+                    <strong id="heroTableSizeStat">13 slots</strong>
+                    <p>Prime-sized lattice tuned for full probe coverage.</p>
+                  </article>
+                  <article class="stat-card">
+                    <span>Step Prime</span>
+                    <strong id="heroStepPrimeStat">11</strong>
+                    <p>Secondary stride keeps each key on its own route.</p>
+                  </article>
+                  <article class="stat-card">
+                    <span>Engine</span>
+                    <strong>Vanilla + GSAP</strong>
+                    <p>Physics-inspired motion with a lightweight frontend.</p>
+                  </article>
+                </div>
+              </div>
+
+              <aside class="hero-side">
+                <div class="formula-stack">
+                  <article class="formula-card">
+                    <span>Primary Hash</span>
+                    <strong id="heroPrimary">h1(k) = k mod 13</strong>
+                  </article>
+                  <article class="formula-card">
+                    <span>Secondary Hash</span>
+                    <strong id="heroSecondary">h2(k) = 11 - (k mod 11)</strong>
+                  </article>
+                  <article class="formula-card">
+                    <span>Probe Equation</span>
+                    <strong id="heroProbe">index(i) = (h1 + i * h2) mod 13</strong>
+                  </article>
+                </div>
+
+                <article class="system-feed mt-5">
+                  <div class="feed-head">
+                    <i data-lucide="activity"></i>
+                    <span>System Feed</span>
+                  </div>
+                  <p id="globalStatus" class="mt-3 text-sm leading-7 text-slate-300">
+                    The lab is standing by. Launch the visualizer to trace a key through the collision grid.
+                  </p>
+                </article>
+              </aside>
+            </div>
+          </div>
+
+          <div class="mt-8 grid gap-6 xl:grid-cols-[1.05fr_0.95fr]">
+            <article class="glass-panel rounded-[1.75rem] p-6 md:p-8">
+              <p class="panel-kicker">Theory Core</p>
+              <h2 class="mt-3 text-2xl font-bold md:text-3xl">Why double hashing feels smarter than linear retries</h2>
+              <div class="mt-6 grid gap-4 md:grid-cols-3">
+                <div class="info-card">
+                  <h3>First Hit</h3>
+                  <p>The first hash picks the initial landing slot using the table size.</p>
+                </div>
+                <div class="info-card">
+                  <h3>Step Size</h3>
+                  <p>The second hash gives each key a personalized stride instead of a shared offset.</p>
+                </div>
+                <div class="info-card">
+                  <h3>Probe Cycle</h3>
+                  <p>The probe walks the table using repeated jumps until an empty card appears.</p>
+                </div>
+              </div>
+
+              <div class="mt-6 compare-strip">
+                <article class="compare-card">
+                  <span>Linear Probing</span>
+                  <strong>Easy, but sticky</strong>
+                  <p>Collisions collect into long neighboring runs.</p>
+                </article>
+                <article class="compare-card">
+                  <span>Quadratic Probing</span>
+                  <strong>Less clustering</strong>
+                  <p>Can still skip coverage unless the table is tuned carefully.</p>
+                </article>
+                <article class="compare-card is-highlight">
+                  <span>Double Hashing</span>
+                  <strong>Key-specific jump</strong>
+                  <p>Keys stop marching in lockstep, so clustering pressure drops.</p>
+                </article>
+              </div>
+            </article>
+
+            <article class="glass-panel rounded-[1.75rem] p-6 md:p-8">
+              <p class="panel-kicker">Guided Preview</p>
+              <h2 class="mt-3 text-2xl font-bold md:text-3xl">Fastest way to see the full story</h2>
+              <div class="mt-6 space-y-4">
+                <div class="story-card">
+                  <span>1</span>
+                  <p>Load the collision demo to seed the table with keys `18`, `31`, `44`, and `57`.</p>
+                </div>
+                <div class="story-card">
+                  <span>2</span>
+                  <p>Insert key `70` to trigger a collision at the primary slot and compute a live jump.</p>
+                </div>
+                <div class="story-card">
+                  <span>3</span>
+                  <p>Watch the scanner beam travel the motion path and burst on the final empty card.</p>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="spa-section is-hidden" data-section="visualizer">
+          <div class="grid gap-6 xl:grid-cols-[0.86fr_1.14fr]">
+            <article class="glass-panel rounded-[1.75rem] p-6 md:p-8">
+              <p class="panel-kicker">Ultimate Visualizer</p>
+              <h2 class="mt-3 text-2xl font-bold md:text-3xl">Drive a key through the 13-slot collision grid</h2>
+
+              <div class="mt-6 grid gap-4">
+                <label class="field-block">
+                  <span>Table Size</span>
+                  <select id="tableSizeSelect" class="field-input">
+                    <option value="3">3 slots</option>
+                    <option value="4">4 slots</option>
+                    <option value="5">5 slots</option>
+                    <option value="6">6 slots</option>
+                    <option value="7">7 slots</option>
+                    <option value="8">8 slots</option>
+                    <option value="9">9 slots</option>
+                    <option value="10">10 slots</option>
+                    <option value="11">11 slots</option>
+                    <option value="12">12 slots</option>
+                    <option value="13" selected>13 slots</option>
+                    <option value="14">14 slots</option>
+                    <option value="15">15 slots</option>
+                  </select>
+                </label>
+
+                <label class="field-block">
+                  <span>Insert Key</span>
+                  <input id="keyInput" class="field-input" type="number" min="0" max="9999" placeholder="Try 70, 83, 96..." />
+                </label>
+
+                <div class="grid gap-4 md:grid-cols-2">
+                  <div class="mini-panel">
+                    <span>Primary</span>
+                    <strong>h1(k) = k mod 13</strong>
+                  </div>
+                  <div class="mini-panel">
+                    <span>Secondary</span>
+                    <strong>h2(k) = 11 - (k mod 11)</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div class="mt-6 flex flex-wrap gap-3">
+                <button id="analyzeBtn" class="primary-cta" type="button">Analyze & Insert</button>
+                <button id="seedBtn" class="secondary-cta" type="button">Load Collision Demo</button>
+                <button id="resetBtn" class="secondary-cta" type="button">Reset Grid</button>
+              </div>
+
+              <div class="mt-5">
+                <p class="text-xs uppercase tracking-[0.35em] text-slate-400">Preset Keys</p>
+                <div class="mt-3 flex flex-wrap gap-2">
+                  <button class="preset-btn" data-preset="18" type="button">18</button>
+                  <button class="preset-btn" data-preset="31" type="button">31</button>
+                  <button class="preset-btn" data-preset="44" type="button">44</button>
+                  <button class="preset-btn" data-preset="57" type="button">57</button>
+                  <button class="preset-btn" data-preset="70" type="button">70</button>
+                  <button class="preset-btn" data-preset="83" type="button">83</button>
+                </div>
+              </div>
+
+              <div class="mt-6 grid gap-4 md:grid-cols-3">
+                <article class="metric-box">
+                  <span>Occupancy</span>
+                  <strong id="occupiedCount">0 / 13</strong>
+                </article>
+                <article class="metric-box">
+                  <span>Last Step</span>
+                  <strong id="lastStepValue">-</strong>
+                </article>
+                <article class="metric-box">
+                  <span>Probe Count</span>
+                  <strong id="probeCount">0</strong>
+                </article>
+              </div>
+
+              <div class="mt-6 grid gap-4 xl:grid-cols-2">
+                <article class="support-card">
+                  <p class="support-kicker">Calculation Feed</p>
+                  <div id="insightList" class="mt-3 grid gap-3"></div>
+                </article>
+                <article class="support-card">
+                  <p class="support-kicker">Slot Snapshot</p>
+                  <div id="tableMiniMap" class="mini-map mt-3"></div>
+                </article>
+              </div>
+
+              <article class="support-card mt-6">
+                <p class="support-kicker">Analyzer Output</p>
+                <p id="analyzerSummary" class="mt-3 text-sm leading-7 text-slate-300">
+                  The grid is empty. Load the guided demo, then insert `70` for a cinematic collision walkthrough.
+                </p>
+              </article>
+            </article>
+
+            <article class="glass-panel rounded-[1.75rem] p-6 md:p-8">
+              <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p class="panel-kicker">Scanner Theater</p>
+                  <h2 class="mt-2 text-2xl font-bold">MotionPath Collision Engine</h2>
+                </div>
+                <div class="legend-row">
+                  <span><i class="legend-dot sky"></i>Scanner</span>
+                  <span><i class="legend-dot rose"></i>Collision</span>
+                  <span><i class="legend-dot mint"></i>Insertion</span>
+                </div>
+              </div>
+
+              <div id="gridStage" class="grid-stage mt-6">
+                <svg id="pathOverlay" class="path-overlay" aria-hidden="true"></svg>
+                <div id="scannerBeam" class="scanner-beam" aria-hidden="true"></div>
+                <div id="tooltip" class="calc-tooltip" aria-hidden="true">
+                  <span>Collision Alert</span>
+                  <strong id="tooltipValue">h2(k) = 0</strong>
+                </div>
+                <div id="burst" class="burst-ring" aria-hidden="true"></div>
+                <div id="hashGrid" class="hash-grid"></div>
+              </div>
+
+              <div class="mt-6 grid gap-4 xl:grid-cols-[0.95fr_1.05fr]">
+                <article class="support-card">
+                  <p class="support-kicker">Probe Rail</p>
+                  <div id="probeRail" class="mt-3 flex flex-wrap gap-2"></div>
+                </article>
+                <article class="support-card">
+                  <p class="support-kicker">Execution Log</p>
+                  <div id="logList" class="mt-3 grid max-h-[18rem] gap-3 overflow-auto"></div>
+                </article>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="spa-section is-hidden" data-section="polyglot">
+          <div class="glass-panel rounded-[1.75rem] p-6 md:p-8">
+            <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div>
+                <p class="panel-kicker">Polyglot Switcher</p>
+                <h2 class="mt-2 text-2xl font-bold md:text-3xl">One algorithm, four production-flavored implementations</h2>
+              </div>
+              <p class="max-w-xl text-sm leading-7 text-slate-300">
+                The code window behaves like a component: one source of truth, sliding tab transitions, and syntax-themed formatting.
+              </p>
+            </div>
+
+            <div class="code-window mt-8 overflow-hidden rounded-[1.75rem]">
+              <div class="code-window-top">
+                <div class="window-dots">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+                <div class="code-tabs" id="codeTabs">
+                  <button class="code-tab is-active" data-lang="python" type="button">Python</button>
+                  <button class="code-tab" data-lang="cpp" type="button">C++</button>
+                  <button class="code-tab" data-lang="java" type="button">Java</button>
+                  <button class="code-tab" data-lang="rust" type="button">Rust</button>
+                  <div id="tabGlider" class="tab-glider" aria-hidden="true"></div>
+                </div>
+              </div>
+
+              <div class="code-stage">
+                <pre id="codeOutgoing" class="code-panel is-hidden"><code></code></pre>
+                <pre id="codeIncoming" class="code-panel"><code id="codeContent"></code></pre>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+    <script src="./script.js?v=3"></script>
+  </body>
+</html>
